@@ -1,0 +1,58 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #0f172a;
+    color: #f8fafc;
+    margin: 0;
+}
+
+.container {
+    max-width: 720px;
+    margin: 2rem auto;
+    background: #1e293b;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(15, 23, 42, 0.45);
+}
+
+form {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.95rem;
+    gap: 0.25rem;
+}
+
+input, select, button {
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    border: none;
+}
+
+input, select {
+    background: #0f172a;
+    color: #f8fafc;
+}
+
+button {
+    cursor: pointer;
+    background: #22d3ee;
+    color: #0f172a;
+    font-weight: 600;
+}
+
+.status {
+    min-height: 1.5rem;
+    font-size: 0.9rem;
+}
+
+fieldset {
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 0.75rem;
+}
+

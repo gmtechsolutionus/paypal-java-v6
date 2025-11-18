@@ -1,0 +1,13 @@
+{
+  "name": "paypal-java-v6",
+  "version": "1.0.0",
+  "description": "PayPal Java SDK v6 Backend",
+  "scripts": {
+    "build": "echo 'Java build handled separately'"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.x"
+  }
+}
+
