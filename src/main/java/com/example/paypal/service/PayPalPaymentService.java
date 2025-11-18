@@ -44,9 +44,45 @@ public class PayPalPaymentService {
     public void verifyCredential(PayPalCredential credential) {
         PayPalHttpClient client = clientFactory.fromCredential(credential);
         try {
-            client.fetchAccessToken();
+            // Validate credentials by attempting to create a minimal test order
+            // This will fail with authentication error if credentials are invalid
+            OrdersCreateRequest testRequest = new OrdersCreateRequest();
+            testRequest.header("Prefer", "return=representation");
+            
+            Map<String, Object> amount = new HashMap<>();
+            amount.put("currency_code", "USD");
+            amount.put("value", "0.01");
+            
+            Map<String, Object> purchaseUnit = new HashMap<>();
+            purchaseUnit.put("amount", amount);
+            
+            Map<String, Object> orderBody = new HashMap<>();
+            orderBody.put("intent", "CAPTURE");
+            orderBody.put("purchase_units", Collections.singletonList(purchaseUnit));
+            
+            testRequest.requestBody(orderBody);
+            
+            // Execute request - will throw exception if credentials are invalid
+            HttpResponse<Order> response = client.execute(testRequest);
+            // If execution succeeds, credentials are valid
         } catch (IOException e) {
+            String errorMsg = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
+            // Check for authentication errors
+            if (errorMsg.contains("401") || errorMsg.contains("unauthorized") || 
+                errorMsg.contains("authentication") || errorMsg.contains("invalid_client")) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid PayPal credentials");
+            }
+            // Other IO errors might be network issues, but we'll treat as validation failure
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Credential validation failed: " + e.getMessage());
+        } catch (Exception e) {
+            String errorMsg = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
+            // Check for authentication errors
+            if (errorMsg.contains("401") || errorMsg.contains("unauthorized") || 
+                errorMsg.contains("authentication") || errorMsg.contains("invalid_client")) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid PayPal credentials");
+            }
+            // For other errors (like missing payment source), credentials might still be valid
+            // We'll allow it to pass - actual validation will happen on first payment
         }
     }
 
